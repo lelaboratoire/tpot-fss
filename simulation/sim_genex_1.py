@@ -1,7 +1,6 @@
 from tpot import TPOTClassifier
 from sklearn.model_selection import train_test_split, cross_val_score
 # from tpot.config.classifier_nn import classifier_config_nn
-
 from sklearn.pipeline import make_pipeline
 # from tpot.config import classifier_config_dict_light
 from tpot.config import classifier_config_dict
@@ -35,7 +34,7 @@ uniq_features = set(all_features.split(';')) # unique features in all subsets
 overlap_features = list(uniq_features.intersection(set(list(Xdata.columns.values))))
 X_subset = Xdata[overlap_features]
 
-X_train, X_test, y_train, y_test = train_test_split(X_subset, Ydata,
+X_train, X_test, y_train, y_test = train_test_split(X_subset, Ydata, random_state = 161803,
                                                     train_size=0.75, test_size=0.25)
 
 del X_subset
@@ -56,6 +55,5 @@ for seed in range(100):
 
     tpot.export('pipelines/' + dat_name + str(seed) + '.py')
     accuracy_ls.append([tpot._optimized_pipeline_score, tpot.score(X_test, y_test)])
-
-accuracy_mat = pd.DataFrame(accuracy_ls, columns = ['Training CV Accuracy', 'Testing Accuracy'])
-accuracy_mat.to_csv("accuracies/" + str(n_gen) + '_' + str(n_pop) + ".tsv", sep = "\t")
+    accuracy_mat = pd.DataFrame(accuracy_ls, columns = ['Training CV Accuracy', 'Testing Accuracy'])
+    accuracy_mat.to_csv("accuracies/" + str(n_gen) + '_' + str(n_pop) + '_' + str(seed) + ".tsv", sep = "\t")
