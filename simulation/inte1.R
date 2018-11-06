@@ -35,9 +35,9 @@ data.sets <- createSimulation(num.samples = n.samples,
                               sim.type = type,
                               save.file = NULL,
                               verbose = verbose)
-save(data.sets, file = "data_inte_1618.Rdata")
+# save(data.sets, file = "data_inte_1618.Rdata")
 # load("data_inte_1618.Rdata")
-write_csv(data.sets$train, "simulatedGenex.csv")
+# write_csv(data.sets$train, "simulatedGenex.csv")
 
 # Fit a gamma distribution to the known 23 module sizes
 mod23 <- read.csv("module23.csv")
@@ -50,8 +50,8 @@ plot(fit.gamma)
 # until reaches n.variables = 5000
 subset.sizes <- ceiling(rgamma(ndraws, paras[1], paras[2]))
 cum.sizes <- cumsum(subset.sizes)
-# Patch beginning and end - last subset size to be > 100
-cum.sizes <- c(0, cum.sizes[cum.sizes < (n.variables - 100)], n.variables) 
+# Patch beginning and end - last subset size to be > 0
+cum.sizes <- c(0, cum.sizes[cum.sizes < (n.variables*(1-pct.signals) - 0)], n.variables) 
 nsubs <- length(cum.sizes) - 1
 all.features <- colnames(data.sets$train)
 null.feats <- setdiff(all.features, c(data.sets$signal.names, "class"))
