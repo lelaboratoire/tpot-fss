@@ -59,5 +59,9 @@ y.pred.bin <- predict(caret.cv, newdata = Xtest)
 # y.pred <- predict(my.rf, data = Xtest)$predictions
 # (accuracy <- sum(y.pred == ytest)/length(ytest))
 
-
-
+max(caret.cv$resample$Accuracy)
+caret.cv$results[which.max(caret.cv$results$Accuracy),]
+caret.cv$finalModel$tuneValue
+caret.cv$results[caret.cv$results$eta == 0.8 & 
+                   caret.cv$results$subsample == 0.7 &
+                   caret.cv$results$max_depth == 3,]
