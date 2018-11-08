@@ -2,8 +2,14 @@ rm(list = ls())
 
 library(reshape2)
 library(tidyverse)
+# library(viridis)
+library(ggthemes)
+library(scales)
 
-accu <- read_tsv("accuracies_ds/100_100_23.tsv")
+n.iters <- 36
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+accu <- read_tsv(paste0("accuracies_ds/100_100_", n.iters - 1, ".tsv"))
 colnames(accu)[1] <- "dataidx"
 accu.melt <- melt(accu, id = "dataidx")
 
@@ -11,7 +17,6 @@ ggplot(accu.melt, aes(y = value, x = variable, color = variable)) +
   geom_point() + geom_line(aes(group = dataidx), color = "grey") + 
   theme_bw() + labs(y = "Accuracy", x = "") +
   theme(legend.position = "None", legend.title = element_blank())
-
 
 filenames <- list.files("pipelines_ds", pattern="*.py", full.names=TRUE)
 files.short <- gsub("pipelines_ds/RNASeq_|.py|score_", "", filenames)
@@ -37,11 +42,31 @@ accu.subset.sum <-
 
 p <- ggplot(accu.subset, aes(group = subidx)) + 
   geom_histogram(aes(x = subidx, fill = selectedSubsetID), alpha = 0.4, binwidth = 1) +
-  geom_jitter(aes(x = subidx, y = (`Testing Accuracy`-0.4)*10/0.6, color = selectedSubsetID)) + 
-  scale_y_continuous(sec.axis = sec_axis(~.*0.6/10+0.4, name = "Average Testing Accuracy")) +
+  geom_jitter(aes(x = subidx, y = (`Testing Accuracy`-0.4)*10/0.2, color = selectedSubsetID)) + 
+  scale_y_continuous(sec.axis = sec_axis(~.*0.2/10+0.4, name = "Testing Accuracy")) +
   theme_bw() +   
   scale_x_continuous(breaks = seq(1, 23, 3), limits = c(1, 23), minor_breaks = 1:23) + 
-  labs(x = "Subset ID", y = "Count") +
+  labs(x = "Subset ID", y = "Pipeline choice frequency") +
   guides(fill = FALSE) + guides(colour=FALSE)
 
 p
+
+
+
+q <- ggplot(accu.subset, aes(group = subidx)) + 
+  # geom_histogram(aes(x = subidx, fill = selectedSubsetID), alpha = 0.4, binwidth = 1) +
+  geom_boxplot(aes(x = subidx, y = `Testing Accuracy`, fill = selectedSubsetID), alpha = 0.5) +
+  geom_jitter(aes(x = subidx, y = (`Testing Accuracy`), color = selectedSubsetID),  size = 1) + 
+  # scale_y_continuous(sec.axis = sec_axis(~.*0.2/10+0.4, name = "Testing Accuracy")) +
+  theme_bw() + 
+  # scale_color_colorblind() + 
+  scale_colour_tableau("Classic Color Blind") +
+  scale_fill_tableau("Classic Color Blind") +
+  # scale_fill_colorblind() + 
+  scale_x_continuous(breaks = seq(1, 23, 3), limits = c(1, 23), minor_breaks = 1:23) + 
+  labs(x = "Subset ID", y = "Testing Accuracy") +
+  guides(fill = FALSE) + guides(colour=FALSE)
+
+q
+
+ggsave(q, filename = paste0("real_", n.iters, ".svg"), width = 5, height = 4, units = "in")
