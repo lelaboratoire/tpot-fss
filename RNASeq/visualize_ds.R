@@ -5,7 +5,7 @@ library(tidyverse)
 library(ggthemes)
 library(scales)
 
-n.iters <- 36
+n.iters <- 44
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 accu <- read_tsv(paste0("accuracies_ds/100_100_", n.iters - 1, ".tsv"))
@@ -50,16 +50,19 @@ p <- ggplot(accu.subset, aes(group = subidx)) +
 
 p
 
-
-
 q <- ggplot(accu.subset, aes(group = subidx)) + 
-  geom_boxplot(aes(x = subidx, y = `Testing Accuracy`, fill = selectedSubsetID), alpha = 0.5) +
+  geom_violin(aes(x = subidx, y = `Testing Accuracy`, fill = selectedSubsetID), 
+              alpha = 0.6, scale = "count", trim = T) +
   geom_jitter(aes(x = subidx, y = (`Testing Accuracy`), color = selectedSubsetID),  size = 1) + 
   theme_bw() + 
-  scale_colour_tableau("Classic Color Blind") +
-  scale_fill_tableau("Classic Color Blind") +
-  # scale_color_colorblind() + 
-  # scale_fill_colorblind() + 
+  # viridis::scale_fill_viridis(discrete = TRUE, option="D", reverse = TRUE) +
+  # viridis::scale_color_viridis(discrete = TRUE, option="D", reverse = TRUE) +
+  # scale_colour_tableau("Classic Color Blind") +
+  # scale_fill_tableau("Classic Color Blind") +
+  # scale_color_colorblind() +
+  # scale_fill_colorblind() +
+  scale_fill_viridis_d(direction = -1, end = 0.5) + 
+  scale_color_viridis_d(direction = -1, end = 0.5) +
   scale_x_continuous(breaks = seq(1, 23, 3), limits = c(1, 23), minor_breaks = 1:23) + 
   labs(x = "Subset ID", y = "Testing Accuracy") +
   guides(fill = FALSE) + guides(colour=FALSE)
