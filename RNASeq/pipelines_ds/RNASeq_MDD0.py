@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import Binarizer
 from tpot.builtins import DatasetSelector
 
 # NOTE: Make sure that the class is labeled 'target' in the data file
@@ -12,11 +12,11 @@ features = tpot_data.drop('target', axis=1).values
 training_features, testing_features, training_target, testing_target = \
             train_test_split(features, tpot_data['target'].values, random_state=0)
 
-# Average CV score on the training set was:0.7101449275362319
+# Average CV score on the training set was:0.7266086956521739
 exported_pipeline = make_pipeline(
     DatasetSelector(sel_subset=4, subset_list="module23.csv"),
-    RobustScaler(),
-    ExtraTreesClassifier(bootstrap=False, criterion="gini", max_features=0.6500000000000001, min_samples_leaf=9, min_samples_split=3, n_estimators=100)
+    Binarizer(threshold=0.9500000000000001),
+    ExtraTreesClassifier(bootstrap=True, criterion="gini", max_features=0.55, min_samples_leaf=5, min_samples_split=2, n_estimators=100)
 )
 
 exported_pipeline.fit(training_features, training_target)

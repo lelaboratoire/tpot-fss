@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
+from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import RobustScaler
 from tpot.builtins import DatasetSelector
@@ -10,13 +10,13 @@ from tpot.builtins import DatasetSelector
 tpot_data = pd.read_csv('PATH/TO/DATA/FILE', sep='COLUMN_SEPARATOR', dtype=np.float64)
 features = tpot_data.drop('target', axis=1).values
 training_features, testing_features, training_target, testing_target = \
-            train_test_split(features, tpot_data['target'].values, random_state=1)
+            train_test_split(features, tpot_data['target'].values, random_state=35)
 
-# Average CV score on the training set was:0.7099130434782609
+# Average CV score on the training set was:0.7259130434782608
 exported_pipeline = make_pipeline(
-    DatasetSelector(sel_subset=12, subset_list="module23.csv"),
+    DatasetSelector(sel_subset=4, subset_list="module23.csv"),
     RobustScaler(),
-    KNeighborsClassifier(n_neighbors=21, p=2, weights="distance")
+    ExtraTreesClassifier(bootstrap=True, criterion="gini", max_features=0.4, min_samples_leaf=4, min_samples_split=2, n_estimators=100)
 )
 
 exported_pipeline.fit(training_features, training_target)
