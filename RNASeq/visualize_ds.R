@@ -2,7 +2,6 @@ rm(list = ls())
 
 library(reshape2)
 library(tidyverse)
-# library(viridis)
 library(ggthemes)
 library(scales)
 
@@ -54,14 +53,12 @@ p
 
 
 q <- ggplot(accu.subset, aes(group = subidx)) + 
-  # geom_histogram(aes(x = subidx, fill = selectedSubsetID), alpha = 0.4, binwidth = 1) +
   geom_boxplot(aes(x = subidx, y = `Testing Accuracy`, fill = selectedSubsetID), alpha = 0.5) +
   geom_jitter(aes(x = subidx, y = (`Testing Accuracy`), color = selectedSubsetID),  size = 1) + 
-  # scale_y_continuous(sec.axis = sec_axis(~.*0.2/10+0.4, name = "Testing Accuracy")) +
   theme_bw() + 
-  # scale_color_colorblind() + 
   scale_colour_tableau("Classic Color Blind") +
   scale_fill_tableau("Classic Color Blind") +
+  # scale_color_colorblind() + 
   # scale_fill_colorblind() + 
   scale_x_continuous(breaks = seq(1, 23, 3), limits = c(1, 23), minor_breaks = 1:23) + 
   labs(x = "Subset ID", y = "Testing Accuracy") +
