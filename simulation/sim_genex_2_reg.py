@@ -1,7 +1,6 @@
 from tpot import TPOTClassifier
 from sklearn.model_selection import train_test_split, cross_val_score
 # from tpot.config.classifier_nn import classifier_config_nn
-import random
 from sklearn.pipeline import make_pipeline
 # from tpot.config import classifier_config_dict_light
 from tpot.config import classifier_config_dict
@@ -35,7 +34,7 @@ uniq_features = set(all_features.split(';')) # unique features in all subsets
 overlap_features = list(uniq_features.intersection(set(list(Xdata.columns.values))))
 X_subset = Xdata[overlap_features]
 
-X_train, X_test, y_train, y_test = train_test_split(X_subset, Ydata, random_state = 161803,
+X_train, X_test, y_train, y_test = train_test_split(X_subset, Ydata, random_state = 1618,
                                                     train_size=0.75, test_size=0.25)
 
 del X_subset
@@ -43,7 +42,7 @@ del Xdata
 del Ydata
 del tpot_data
 
-for seed in range(5):
+for seed in range(100):
     # X_train, X_test, y_train, y_test = train_test_split(X_subset, Ydata, random_state=seed,
     #                                                     train_size=0.75, test_size=0.25)
     tpot = TPOTClassifier(generations=n_gen, config_dict=personal_config,

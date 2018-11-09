@@ -34,7 +34,7 @@ uniq_features = set(all_features.split(';')) # unique features in all subsets
 overlap_features = list(uniq_features.intersection(set(list(Xdata.columns.values))))
 X_subset = Xdata[overlap_features]
 
-X_train, X_test, y_train, y_test = train_test_split(X_subset, Ydata, random_state = 161803,
+X_train, X_test, y_train, y_test = train_test_split(X_subset, Ydata, random_state = 1618,
                                                     train_size=0.75, test_size=0.25)
 
 del X_subset
