@@ -1,22 +1,22 @@
 import numpy as np
 import pandas as pd
+from sklearn.cluster import FeatureAgglomeration
+from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import Normalizer
 from tpot.builtins import DatasetSelector
 
 # NOTE: Make sure that the class is labeled 'target' in the data file
 tpot_data = pd.read_csv('PATH/TO/DATA/FILE', sep='COLUMN_SEPARATOR', dtype=np.float64)
 features = tpot_data.drop('target', axis=1).values
 training_features, testing_features, training_target, testing_target = \
-            train_test_split(features, tpot_data['target'].values, random_state=5)
+            train_test_split(features, tpot_data['target'].values, random_state=78)
 
-# Average CV score on the training set was:0.7478976640711903
+# Average CV score on the training set was:0.6944011865035224
 exported_pipeline = make_pipeline(
     DatasetSelector(sel_subset=0, subset_list="subsets.csv"),
-    Normalizer(norm="l2"),
-    GaussianNB()
+    FeatureAgglomeration(affinity="euclidean", linkage="ward"),
+    ExtraTreesClassifier(bootstrap=False, criterion="gini", max_features=0.6000000000000001, min_samples_leaf=5, min_samples_split=14, n_estimators=100)
 )
 
 exported_pipeline.fit(training_features, training_target)

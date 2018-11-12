@@ -34,9 +34,9 @@ cl <- makeCluster(4, type = "SOCK")
 # register cluster
 t0 <- proc.time()
 
-registerDoSNOW(cl)
-set.seed(161308)
 # train model with training data
+registerDoSNOW(cl)
+set.seed(1613)
 caret.cv <- train(Xtrain, as.factor(ytrain),
                   method = "xgbTree",
                   metric = "Accuracy",

@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import Normalizer
@@ -10,13 +10,13 @@ from tpot.builtins import DatasetSelector
 tpot_data = pd.read_csv('PATH/TO/DATA/FILE', sep='COLUMN_SEPARATOR', dtype=np.float64)
 features = tpot_data.drop('target', axis=1).values
 training_features, testing_features, training_target, testing_target = \
-            train_test_split(features, tpot_data['target'].values, random_state=8)
+            train_test_split(features, tpot_data['target'].values, random_state=80)
 
-# Average CV score on the training set was:0.5942602892102335
+# Average CV score on the training set was:0.711301446051168
 exported_pipeline = make_pipeline(
-    DatasetSelector(sel_subset=2, subset_list="subsets.csv"),
-    Normalizer(norm="l1"),
-    ExtraTreesClassifier(bootstrap=False, criterion="entropy", max_features=0.1, min_samples_leaf=3, min_samples_split=3, n_estimators=100)
+    DatasetSelector(sel_subset=0, subset_list="subsets.csv"),
+    Normalizer(norm="max"),
+    RandomForestClassifier(bootstrap=False, criterion="gini", max_features=0.15000000000000002, min_samples_leaf=1, min_samples_split=7, n_estimators=100)
 )
 
 exported_pipeline.fit(training_features, training_target)

@@ -10,13 +10,13 @@ from tpot.builtins import DatasetSelector
 tpot_data = pd.read_csv('PATH/TO/DATA/FILE', sep='COLUMN_SEPARATOR', dtype=np.float64)
 features = tpot_data.drop('target', axis=1).values
 training_features, testing_features, training_target, testing_target = \
-            train_test_split(features, tpot_data['target'].values, random_state=2)
+            train_test_split(features, tpot_data['target'].values, random_state=9)
 
-# Average CV score on the training set was:0.7538895068594735
+# Average CV score on the training set was:0.7755951056729699
 exported_pipeline = make_pipeline(
     DatasetSelector(sel_subset=0, subset_list="subsets.csv"),
-    Nystroem(gamma=0.8, kernel="linear", n_components=4),
-    ExtraTreesClassifier(bootstrap=False, criterion="entropy", max_features=0.9000000000000001, min_samples_leaf=2, min_samples_split=6, n_estimators=100)
+    Nystroem(gamma=0.5, kernel="linear", n_components=8),
+    ExtraTreesClassifier(bootstrap=False, criterion="gini", max_features=0.9000000000000001, min_samples_leaf=1, min_samples_split=7, n_estimators=100)
 )
 
 exported_pipeline.fit(training_features, training_target)
