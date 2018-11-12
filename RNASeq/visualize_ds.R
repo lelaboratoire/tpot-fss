@@ -15,7 +15,7 @@ check.packages(packages)
 
 library(tidyverse)
 
-n.iters <- 75
+n.iters <- 100
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 accu <- read_tsv(paste0("accuracies_ds/100_100_", n.iters - 1, ".tsv"))
 colnames(accu)[1] <- "dataidx"
@@ -48,7 +48,7 @@ accu.subset$subname <- factor(accu.subset$subname, levels = paste0("s", sort(uni
 
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subname)) + 
   geom_boxplot(color = "grey40") +
-  stat_summary(fun.data = function(x) c(y = 0.72, label = round(length(x)/n.iters, 2)), 
+  stat_summary(fun.data = function(x) c(y = 0.77, label = round(length(x)/n.iters, 2)), 
                geom = "text", fun.y = NULL, 
                position = position_dodge(width = 0.75)) +
   ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.8, size = 1, alpha = 0.8) +
@@ -73,3 +73,21 @@ ggplot(accu.sub.melt, aes(y = value, x = variable, group = subname, color = subn
   theme_bw() + labs(y = "Accuracy", x = "") +
   theme(legend.position = c(0.15,0.28))
 
+
+
+accu.subset$box <- accu.subset$subname %in% c("s4", "s12")
+q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subname)) + 
+  stat_summary(fun.data = function(x) c(y = 0.77, label = round(length(x)/n.iters, 2)), 
+               geom = "text", fun.y = NULL, 
+               position = position_dodge(width = 0.75)) +
+  geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  aes(x = subname, y = `Testing Accuracy`), color = "grey40") +
+  ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.6, size = 1, alpha = 0.8) +
+  theme_bw() + 
+  annotate("text", x = 4.8, y = 0.45, size = 2, fontface = 'italic',
+           label = "* Boxplots are drawn for subsets with more than three data points") +
+  viridis::scale_color_viridis(discrete = T) +
+  labs(x = "Subset ID", y = "Testing Accuracy") +
+  guides(fill = FALSE) + guides(colour=FALSE)
+
+ggsave(q, filename = paste0("real_", n.iters, ".svg"), width = 5, height = 4, units = "in")
+ 
