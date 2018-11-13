@@ -2,7 +2,6 @@ library(tidyverse)
 library(xgboost)
 library(caret)
 library(parallel)
-library(doSNOW)
 library(ranger)
 rm(list = ls())
 
@@ -16,6 +15,8 @@ Xtest <- select(dat.test, - class)
 ytest <- dat.test$class
 # length(ytrain)
 
+cl <- makeCluster(detectCores())
+doParallel::registerDoParallel(cl)
 
 set.seed(1613)
 seeds <- vector(mode = "list", length = 51)
@@ -26,7 +27,7 @@ for(i in 1:50) seeds[[i]]<- sample.int(n=1000, 72)
 seeds[[51]]<-sample.int(1000, 1)
 
 
-train.control <- trainControl(method = "adaptive_cv", 
+train.control <- trainControl(method = "repeatedcv", 
                               number = 10,
                               repeats = 5,
                               search = "random",
@@ -46,8 +47,7 @@ tune.grid <- expand.grid(eta = c(0.8, 0.9, 1),
 # register cluster
 t0 <- proc.time()
 
-cl <- makeCluster(detectCores())
-doParallel::registerDoParallel(cl)
+
 # train model with training data
 # registerDoSNOW(cl)
 caret.cv <- train(Xtrain, as.factor(ytrain),
