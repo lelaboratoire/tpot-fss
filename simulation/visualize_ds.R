@@ -15,7 +15,7 @@ check.packages(packages)
 
 library(tidyverse)
 
-n.iters <- 86
+n.iters <- 100
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 accu <- read_tsv(paste0("accuracies_ds/100_100_", n.iters - 1, ".tsv"))
 colnames(accu)[1] <- "dataidx"
@@ -41,10 +41,10 @@ accu.subset$subidx <- as.numeric(accu.subset$selectedSubsetID)
 accu.subset.sum <- 
   accu.subset %>% 
   group_by(subidx) %>% 
-  summarise(avg.test = mean(`Testing Accuracy`))
-accu.subset$subname <- as.factor(paste0("s", accu.subset$subidx))
-accu.subset$subname <- factor(accu.subset$subname, levels = paste0("s", sort(unique(accu.subset$subidx))))
+  summarise(avg.test = mean(`Testing Accuracy`), avg.train.CV = mean(`Training CV Accuracy`))
 
+accu.subset$subname <- as.factor(paste0("s", accu.subset$subidx +1))
+accu.subset$subname <- factor(accu.subset$subname, levels = paste0("s", sort(unique(accu.subset$subidx))+1))
 
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subname)) + 
   geom_boxplot(color = "grey40") +
@@ -75,7 +75,7 @@ ggplot(accu.sub.melt, aes(y = value, x = variable, group = subname, color = subn
 
 
 
-accu.subset$box <- accu.subset$subname %in% c("s0", "s4")
+accu.subset$box <- accu.subset$subname %in% c("s1", "s5")
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subname)) + 
   stat_summary(fun.data = function(x) c(y = 0.9, label = round(length(x)/n.iters, 2)), 
                geom = "text", fun.y = NULL, 
@@ -85,11 +85,11 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subnam
   ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.8, size = 1, alpha = 0.8) +
   # geom_jitter(height = 0) +
   theme_bw() + 
-  annotate("text", x = 9, y = 0.38, size = 2, fontface = 'italic',
+  annotate("text", x = 11, y = 0.35, size = 2, fontface = 'italic',
            label = "* Boxplots are drawn for subsets with more than three data points") +
   viridis::scale_color_viridis(discrete = T) +
   labs(x = "Subset ID", y = "Testing Accuracy") +
   guides(fill = FALSE) + guides(colour=FALSE)
 q
-ggsave(q, filename = paste0("sim_", n.iters, ".svg"), width = 5, height = 4, units = "in")
+ggsave(q, filename = paste0("sim_", n.iters, ".svg"), width = 7, height = 4, units = "in")
 
