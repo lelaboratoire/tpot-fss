@@ -41,9 +41,9 @@ accu.subset$subidx <- as.numeric(accu.subset$selectedSubsetID)
 accu.subset.sum <- 
   accu.subset %>% 
   group_by(subidx) %>% 
-  summarise(avg.test = mean(`Testing Accuracy`))
-accu.subset$subname <- as.factor(paste0("s", accu.subset$subidx))
-accu.subset$subname <- factor(accu.subset$subname, levels = paste0("s", sort(unique(accu.subset$subidx))))
+  summarise(avg.test = mean(`Testing Accuracy`), avg.train.CV = mean(`Training CV Accuracy`))
+accu.subset$subname <- as.factor(paste0("s", accu.subset$subidx+1))
+accu.subset$subname <- factor(accu.subset$subname, levels = paste0("s", sort(unique(accu.subset$subidx))+1))
 
 
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subname)) + 
@@ -75,7 +75,7 @@ ggplot(accu.sub.melt, aes(y = value, x = variable, group = subname, color = subn
 
 
 
-accu.subset$box <- accu.subset$subname %in% c("s4", "s12")
+accu.subset$box <- accu.subset$subname %in% c("s5", "s13")
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subname)) + 
   stat_summary(fun.data = function(x) c(y = 0.77, label = round(length(x)/n.iters, 2)), 
                geom = "text", fun.y = NULL, 
