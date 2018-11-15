@@ -75,21 +75,37 @@ ggplot(accu.sub.melt, aes(y = value, x = variable, group = subname, color = subn
 
 
 
-accu.subset$box <- accu.subset$subname %in% c("s1", "s5")
-q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subname)) + 
-  stat_summary(fun.data = function(x) c(y = 0.9, label = round(length(x)/n.iters, 2)), 
-               geom = "text", fun.y = NULL, 
+accu.subset$box <- accu.subset$subname %in% c("s1", "s5", "s15")
+accu.subset$col <- accu.subset$subname %in% c("s1", "s3", "s5", "s8", "s12", "s16", "s18")
+q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) +
+  stat_summary(fun.data = function(x) c(y = 0.9, label = length(x)),
+               geom = "text", fun.y = NULL,
                position = position_dodge(width = 0.75)) +
-  geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  
-               aes(x = subname, y = `Testing Accuracy`), color = "grey40", alpha = 0) +
-  ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.8, size = 1, alpha = 0.8) +
-  # geom_jitter(height = 0) +
-  theme_bw() + 
+  geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  aes(x = subname, y = `Testing Accuracy`), color = "grey40") +
+  ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.3, size = 1.2, alpha = 0.8) +
+  theme_bw() +
   annotate("text", x = 11, y = 0.35, size = 2, fontface = 'italic',
            label = "* Boxplots are drawn for subsets with more than three data points") +
-  viridis::scale_color_viridis(discrete = T) +
-  labs(x = "Subset ID", y = "Testing Accuracy") +
+  # viridis::scale_color_viridis(discrete = T, option = "E") +
+  scale_color_manual(values = cbbPalette[1:2]) +
+  scale_y_continuous(labels = scales::percent, name = "Holdout Accuracy") +
+  labs(x = "Subset ID") +
   guides(fill = FALSE) + guides(colour=FALSE)
+
+# q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) + 
+#   stat_summary(fun.data = function(x) c(y = 0.9, label = round(length(x)/n.iters, 2)), 
+#                geom = "text", fun.y = NULL, 
+#                position = position_dodge(width = 0.75)) +
+#   geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  
+#                aes(x = subname, y = `Testing Accuracy`), color = "grey40", alpha = 0) +
+#   ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.8, size = 1, alpha = 0.8) +
+#   # geom_jitter(height = 0) +
+#   theme_bw() + 
+#   annotate("text", x = 11, y = 0.35, size = 2, fontface = 'italic',
+#            label = "* Boxplots are drawn for subsets with more than three data points") +
+#   viridis::scale_color_viridis(discrete = T) +
+#   labs(x = "Subset ID", y = "Testing Accuracy") +
+#   guides(fill = FALSE) + guides(colour=FALSE)
 q
 ggsave(q, filename = paste0("sim_", n.iters, ".svg"), width = 7, height = 4, units = "in")
 
