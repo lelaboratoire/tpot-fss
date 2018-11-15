@@ -42,8 +42,8 @@ accu.subset.sum <-
   accu.subset %>% 
   group_by(subidx) %>% 
   summarise(avg.test = mean(`Testing Accuracy`), avg.train.CV = mean(`Training CV Accuracy`))
-accu.subset$subname <- as.factor(paste0("s", accu.subset$subidx+1))
-accu.subset$subname <- factor(accu.subset$subname, levels = paste0("s", sort(unique(accu.subset$subidx))+1))
+accu.subset$subname <- as.factor(paste0("DGM-", accu.subset$subidx+1))
+accu.subset$subname <- factor(accu.subset$subname, levels = paste0("DGM-", sort(unique(accu.subset$subidx))+1))
 
 
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subname)) + 
@@ -75,8 +75,8 @@ ggplot(accu.sub.melt, aes(y = value, x = variable, group = subname, color = subn
 
 
 
-accu.subset$box <- accu.subset$subname %in% c("s5", "s13")
-accu.subset$col <- accu.subset$subname %in% c("s3", "s5", "s17")
+accu.subset$box <- accu.subset$subname %in% c("DGM-5", "DGM-13")
+accu.subset$col <- accu.subset$subname %in% c("DGM-3", "DGM-5", "DGM-17")
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) + 
   stat_summary(fun.data = function(x) c(y = 0.77, label = length(x)), 
                geom = "text", fun.y = NULL, 
@@ -88,8 +88,8 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
            label = "* Boxplots are drawn for subsets with more than three data points") +
   # viridis::scale_color_viridis(discrete = T, option = "E") +
   scale_color_manual(values = cbbPalette[1:2]) +
-  scale_y_continuous(labels = scales::percent, name = "Holdout Accuracy") +
-  labs(x = "Subset ID") +
+  scale_y_continuous(labels = scales::percent, name = "Holdout accuracy") +
+  labs(x = "") +
   guides(fill = FALSE) + guides(colour=FALSE)
 q
 ggsave(q, filename = paste0("real_", n.iters, ".svg"), width = 5, height = 4, units = "in")

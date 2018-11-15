@@ -88,8 +88,9 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
            label = "* Boxplots are drawn for subsets with more than three data points") +
   # viridis::scale_color_viridis(discrete = T, option = "E") +
   scale_color_manual(values = cbbPalette[1:2]) +
-  scale_y_continuous(labels = scales::percent, name = "Holdout Accuracy") +
-  labs(x = "Subset ID") +
+  scale_y_continuous(labels = scales::percent, name = "Holdout accuracy") +
+  # theme(axis.text.x = element_text(face="italic")) +
+  labs(x = "") +
   guides(fill = FALSE) + guides(colour=FALSE)
 
 # q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) + 
