@@ -76,8 +76,9 @@ ggplot(accu.sub.melt, aes(y = value, x = variable, group = subname, color = subn
 
 
 accu.subset$box <- accu.subset$subname %in% c("s5", "s13")
-q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subname)) + 
-  stat_summary(fun.data = function(x) c(y = 0.77, label = round(length(x)/n.iters, 2)), 
+accu.subset$col <- accu.subset$subname %in% c("s3", "s5", "s17")
+q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) + 
+  stat_summary(fun.data = function(x) c(y = 0.77, label = length(x)), 
                geom = "text", fun.y = NULL, 
                position = position_dodge(width = 0.75)) +
   geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  aes(x = subname, y = `Testing Accuracy`), color = "grey40") +
@@ -85,9 +86,11 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subnam
   theme_bw() + 
   annotate("text", x = 4.8, y = 0.45, size = 2, fontface = 'italic',
            label = "* Boxplots are drawn for subsets with more than three data points") +
-  viridis::scale_color_viridis(discrete = T) +
-  labs(x = "Subset ID", y = "Testing Accuracy") +
+  # viridis::scale_color_viridis(discrete = T, option = "E") +
+  scale_color_manual(values = cbbPalette[1:2]) +
+  scale_y_continuous(labels = scales::percent, name = "Holdout Accuracy") +
+  labs(x = "Subset ID") +
   guides(fill = FALSE) + guides(colour=FALSE)
-
+q
 ggsave(q, filename = paste0("real_", n.iters, ".svg"), width = 5, height = 4, units = "in")
  
