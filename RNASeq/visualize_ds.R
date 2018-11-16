@@ -16,7 +16,8 @@ check.packages(packages)
 library(tidyverse)
 
 n.iters <- 100
-cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", 
+                "#CC79A7", "#c5679b", "#be548f")
 accu <- read_tsv(paste0("accuracies_ds/100_100_", n.iters - 1, ".tsv"))
 colnames(accu)[1] <- "dataidx"
 accu.melt <- reshape2::melt(accu, id = "dataidx")
@@ -81,16 +82,17 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
   stat_summary(fun.data = function(x) c(y = 0.77, label = length(x)), 
                geom = "text", fun.y = NULL, 
                position = position_dodge(width = 0.75)) +
-  geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  aes(x = subname, y = `Testing Accuracy`), color = "grey40") +
-  ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.6, size = 1, alpha = 0.8) +
+  geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  
+               aes(x = subname, y = `Testing Accuracy`), color = "grey70") +
+  ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.6, size = 1.5, alpha = 0.8, stroke = 0) +
   theme_bw() + 
-  annotate("text", x = 4.8, y = 0.45, size = 2, fontface = 'italic',
+  annotate("text", x = 4.3, y = 0.45, size = 2.7, fontface = 'italic',
            label = "* Boxplots are drawn for subsets with more than three data points") +
   # viridis::scale_color_viridis(discrete = T, option = "E") +
-  scale_color_manual(values = cbbPalette[1:2]) +
+  scale_color_manual(values = c(cbbPalette[6], cbbPalette[10])) +
   scale_y_continuous(labels = scales::percent, name = "Holdout accuracy") +
-  labs(x = "") +
+  labs(x = NULL) +
   guides(fill = FALSE) + guides(colour=FALSE)
 q
-ggsave(q, filename = paste0("real_", n.iters, ".svg"), width = 5, height = 4, units = "in")
- 
+ggsave(q, filename = paste0("real_", n.iters, ".svg"), width = 5, height = 3.5, units = "in")
+    

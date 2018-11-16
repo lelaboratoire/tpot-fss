@@ -16,7 +16,8 @@ check.packages(packages)
 library(tidyverse)
 
 n.iters <- 100
-cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", 
+                "#CC79A7", "#c5679b", "#be548f")
 accu <- read_tsv(paste0("accuracies_ds/100_100_", n.iters - 1, ".tsv"))
 colnames(accu)[1] <- "dataidx"
 accu.melt <- reshape2::melt(accu, id = "dataidx")
@@ -74,23 +75,26 @@ ggplot(accu.sub.melt, aes(y = value, x = variable, group = subname, color = subn
   theme(legend.position = c(0.15,0.28))
 
 
-
 accu.subset$box <- accu.subset$subname %in% c("s1", "s5", "s15")
 accu.subset$col <- accu.subset$subname %in% c("s1", "s3", "s5", "s8", "s12", "s16", "s18")
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) +
   stat_summary(fun.data = function(x) c(y = 0.9, label = length(x)),
                geom = "text", fun.y = NULL,
                position = position_dodge(width = 0.75)) +
-  geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  aes(x = subname, y = `Testing Accuracy`), color = "grey40") +
-  ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.3, size = 1.2, alpha = 0.8) +
+  geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  
+               outlier.size = NULL,
+               aes(x = subname, y = `Testing Accuracy`), color = "grey70") +
+  ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.3, size = 1.3, alpha = 0.8, stroke = 0) +
   theme_bw() +
-  annotate("text", x = 11, y = 0.35, size = 2, fontface = 'italic',
+  annotate("text", x = 10.2, y = 0.35, size = 2.5, fontface = 'italic',
            label = "* Boxplots are drawn for subsets with more than three data points") +
   # viridis::scale_color_viridis(discrete = T, option = "E") +
-  scale_color_manual(values = cbbPalette[1:2]) +
+  scale_color_manual(values = c(cbbPalette[6], cbbPalette[10])) +
   scale_y_continuous(labels = scales::percent, name = "Holdout accuracy") +
+  scale_x_discrete() +
+  expand_limits(x = -0.85) +
   # theme(axis.text.x = element_text(face="italic")) +
-  labs(x = "") +
+  labs(x = NULL) +
   guides(fill = FALSE) + guides(colour=FALSE)
 
 # q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) + 
@@ -108,5 +112,5 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
 #   labs(x = "Subset ID", y = "Testing Accuracy") +
 #   guides(fill = FALSE) + guides(colour=FALSE)
 q
-ggsave(q, filename = paste0("sim_", n.iters, ".svg"), width = 7, height = 4, units = "in")
-
+ggsave(q, filename = paste0("sim_", n.iters, ".svg"), width = 5.8, height = 2.8, units = "in")
+ 
