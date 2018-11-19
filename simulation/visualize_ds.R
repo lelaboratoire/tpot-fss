@@ -44,8 +44,8 @@ accu.subset.sum <-
   group_by(subidx) %>% 
   summarise(avg.test = mean(`Testing Accuracy`), avg.train.CV = mean(`Training CV Accuracy`))
 
-accu.subset$subname <- as.factor(paste0("s", accu.subset$subidx +1))
-accu.subset$subname <- factor(accu.subset$subname, levels = paste0("s", sort(unique(accu.subset$subidx))+1))
+accu.subset$subname <- as.factor(paste0("S[", accu.subset$subidx +1, "]"))
+accu.subset$subname <- factor(accu.subset$subname, levels = paste0("S[", sort(unique(accu.subset$subidx))+1, "]"))
 
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subname)) + 
   geom_boxplot(color = "grey40") +
@@ -74,9 +74,9 @@ ggplot(accu.sub.melt, aes(y = value, x = variable, group = subname, color = subn
   theme_bw() + labs(y = "Accuracy", x = "") +
   theme(legend.position = c(0.15,0.28))
 
-
-accu.subset$box <- accu.subset$subname %in% c("s1", "s5", "s15")
-accu.subset$col <- accu.subset$subname %in% c("s1", "s3", "s5", "s8", "s12", "s16", "s18")
+# hacky stuff to interchange colors
+accu.subset$box <- accu.subset$subname %in% c("S[1]", "S[5]", "S[15]")
+accu.subset$col <- accu.subset$subname %in% c("S[1]", "S[3]", "S[5]", "S[8]", "S[12]", "S[16]", "S[18]")
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) +
   stat_summary(fun.data = function(x) c(y = 0.9, label = length(x)),
                geom = "text", fun.y = NULL,
@@ -91,10 +91,11 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
   # viridis::scale_color_viridis(discrete = T, option = "E") +
   scale_color_manual(values = c(cbbPalette[6], cbbPalette[10])) +
   scale_y_continuous(labels = scales::percent, name = "Holdout accuracy") +
-  scale_x_discrete() +
+  # scale_x_discrete() +
   expand_limits(x = -0.85) +
   # theme(axis.text.x = element_text(face="italic")) +
   labs(x = NULL) +
+  scale_x_discrete(labels = parse(text = levels(accu.subset$subname))) +
   guides(fill = FALSE) + guides(colour=FALSE)
 
 # q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) + 
