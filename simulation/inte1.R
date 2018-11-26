@@ -79,6 +79,6 @@ for (i in 1:nsubs){
 write_csv(mysubset, "subsets.csv")
 save(feat.list, file = "subsets.Rdata")
 func.vars <- unlist(lapply(feat.list, function(feats) length(grep(pattern = "simvar", x = feats))))
-signal.df <- data.frame(subset = 1:nsubs, pctSig = func.vars/mysubset[, 2])
+signal.df <- data.frame(subset = 1:nsubs, size = mysubset[, 2], cntSig = func.vars, pctSig = func.vars/mysubset[, 2])
 signal.df <- signal.df[order(signal.df$pctSig, decreasing = T), ]
 write_csv(signal.df, "signalPct.csv")
