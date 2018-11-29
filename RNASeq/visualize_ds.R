@@ -46,6 +46,9 @@ accu.subset.sum <-
 accu.subset$subname <- as.factor(paste0("DGM-", accu.subset$subidx+1))
 accu.subset$subname <- factor(accu.subset$subname, levels = paste0("DGM-", sort(unique(accu.subset$subidx))+1))
 
+write_csv(accu.subset, "accuracyDF.csv")
+accu12 <- accu.subset[accu.subset$subidx==12,]
+accu12 <- accu12[order(accu12$`Testing Accuracy`, decreasing = T),]
 
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subname)) + 
   geom_boxplot(color = "grey40") +
