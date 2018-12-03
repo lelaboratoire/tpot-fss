@@ -1,0 +1,15 @@
+#!/bin/bash
+#BSUB -J test_sim_genex_reg
+#BSUB -o /home/ttle/tpotDataSel_sim2/log/test_sim_reg.log
+#BSUB -e /home/ttle/tpotDataSel_sim2/log/test_sim_reg.err
+#BSUB -q moore_long
+#BSUB -M 60000
+#BSUB -R "span[hosts=1]"
+#BSUB -n 1
+
+#export PATH="/home/ttle/anaconda/bin:$PATH"
+cd /home/ttle/tpotDataSel_sim2
+
+source activate datasetSelector
+
+python sim_genex_2_reg.py
