@@ -37,42 +37,22 @@ for (file in filenames){
 }
 selected.sub$dataidx <- as.numeric(gsub("simulatedGenex", "", rownames(selected.sub)))
 
-accu.subset <- merge(selected.sub, accu, by = "dataidx")
-accu.subset$subidx <- as.numeric(accu.subset$selectedSubsetID)
 accu.subset.sum <- 
   accu.subset %>% 
   group_by(subidx) %>% 
   summarise(avg.test = mean(`Testing Accuracy`), avg.train.CV = mean(`Training CV Accuracy`))
 
-accu.subset$subname <- as.factor(paste0("S[", accu.subset$subidx +1, "]"))
+accu.subset <- merge(selected.sub, accu, by = "dataidx") %>%
+  mutate(subidx = as.numeric(selectedSubsetID)) %>%
+  mutate(subname = factor(as.factor(paste0("S[", subidx+1, "]")))) %>%
+  arrange(desc(`Testing Accuracy`))
+         
+write_csv(accu.subset, "accuracyDF.csv")
 accu.subset$subname <- factor(accu.subset$subname, levels = paste0("S[", sort(unique(accu.subset$subidx))+1, "]"))
-
-q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subname)) + 
-  geom_boxplot(color = "grey40") +
-  stat_summary(fun.data = function(x) c(y = 0.77, label = round(length(x)/n.iters, 2)), 
-               geom = "text", fun.y = NULL, 
-               position = position_dodge(width = 0.75)) +
-  ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.8, size = 1, alpha = 0.8) +
-  theme_bw() + 
-  viridis::scale_color_viridis(discrete = T) +
-  labs(x = "Subset ID", y = "Testing Accuracy") +
-  guides(fill = FALSE) + guides(colour=FALSE)
-
-q
-
-# ggsave(q, filename = paste0("real_", n.iters, ".svg"), width = 5, height = 4, units = "in")
 
 accu.sub.melt <- reshape2::melt(
   accu.subset[, c("Training CV Accuracy", "Testing Accuracy", "subname", "dataidx")],
   id = c("subname", "dataidx"))
-
-
-ggplot(accu.sub.melt, aes(y = value, x = variable, group = subname, color = subname)) + 
-  geom_point() + geom_line(aes(group = dataidx)) + 
-  viridis::scale_color_viridis(discrete = T) +
-  labs(color = "Subset") +
-  theme_bw() + labs(y = "Accuracy", x = "") +
-  theme(legend.position = c(0.15,0.28))
 
 # hacky stuff to interchange colors
 accu.subset$box <- accu.subset$subname %in% c("S[1]", "S[5]", "S[15]")
@@ -88,30 +68,13 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
   theme_bw() +
   annotate("text", x = 10.2, y = 0.35, size = 2.5, fontface = 'italic',
            label = "* Boxplots are drawn for subsets with more than three data points") +
-  # viridis::scale_color_viridis(discrete = T, option = "E") +
   scale_color_manual(values = c(cbbPalette[6], cbbPalette[10])) +
   scale_y_continuous(labels = scales::percent, name = "Holdout accuracy") +
-  # scale_x_discrete() +
   expand_limits(x = -0.85) +
-  # theme(axis.text.x = element_text(face="italic")) +
   labs(x = NULL) +
   scale_x_discrete(labels = parse(text = levels(accu.subset$subname))) +
   guides(fill = FALSE) + guides(colour=FALSE)
 
-# q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) + 
-#   stat_summary(fun.data = function(x) c(y = 0.9, label = round(length(x)/n.iters, 2)), 
-#                geom = "text", fun.y = NULL, 
-#                position = position_dodge(width = 0.75)) +
-#   geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  
-#                aes(x = subname, y = `Testing Accuracy`), color = "grey40", alpha = 0) +
-#   ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.8, size = 1, alpha = 0.8) +
-#   # geom_jitter(height = 0) +
-#   theme_bw() + 
-#   annotate("text", x = 11, y = 0.35, size = 2, fontface = 'italic',
-#            label = "* Boxplots are drawn for subsets with more than three data points") +
-#   viridis::scale_color_viridis(discrete = T) +
-#   labs(x = "Subset ID", y = "Testing Accuracy") +
-#   guides(fill = FALSE) + guides(colour=FALSE)
 q
 ggsave(q, filename = paste0("sim_", n.iters, ".svg"), width = 5.8, height = 2.8, units = "in")
  
