@@ -4,3 +4,6 @@
 .Ruserdata
 .DS_Store
 tpot-ds.Rproj
+RNASeq/.ipynb_checkpoints/
+simulation/.ipynb_checkpoints/
+simulation/.DS_Store
