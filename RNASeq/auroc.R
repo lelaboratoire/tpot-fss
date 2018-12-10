@@ -17,10 +17,8 @@ y.pred <- predict(caret.cv, newdata = Xtest, type = "prob")[, 2]
 write_csv(data.frame(ypred = y.pred, y = as.numeric(ytest)), "XGBoostPredSim.csv")
 predXGBoostSim <- read_csv("XGBoostPredSim.csv")
 # predTpotDsSim <- read_csv("predictionsTpot.csv")
-
-
-myroc = pROC::roc(pred5$y, pred5$ypred)
-plot.roc(myroc, print.auc = TRUE, col='red')
+# myroc = pROC::roc(pred5$y, pred5$ypred)
+# plot.roc(myroc, print.auc = TRUE, col='red')
 
 myrocX = pROC::roc(predXGBoostSim$y, predXGBoostSim$ypred)
 myrocT5 = pROC::roc(pred5$y, pred5$ypred)
