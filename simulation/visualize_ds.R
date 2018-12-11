@@ -37,16 +37,18 @@ for (file in filenames){
 }
 selected.sub$dataidx <- as.numeric(gsub("simulatedGenex", "", rownames(selected.sub)))
 
-accu.subset.sum <- 
-  accu.subset %>% 
-  group_by(subidx) %>% 
-  summarise(avg.test = mean(`Testing Accuracy`), avg.train.CV = mean(`Training CV Accuracy`))
 
 accu.subset <- merge(selected.sub, accu, by = "dataidx") %>%
   mutate(subidx = as.numeric(selectedSubsetID)) %>%
   mutate(subname = factor(as.factor(paste0("S[", subidx+1, "]")))) %>%
   arrange(desc(`Testing Accuracy`))
-         
+
+accu.subset.sum <- 
+  accu.subset %>% 
+  group_by(subidx) %>% 
+  summarise(avg.test = mean(`Testing Accuracy`), avg.train.CV = mean(`Training CV Accuracy`))
+
+    
 write_csv(accu.subset, "accuracyDF.csv")
 accu.subset$subname <- factor(accu.subset$subname, levels = paste0("S[", sort(unique(accu.subset$subidx))+1, "]"))
 
@@ -69,7 +71,7 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
   annotate("text", x = 10.2, y = 0.35, size = 2.5, fontface = 'italic',
            label = "* Boxplots are drawn for subsets with more than three data points") +
   scale_color_manual(values = c(cbbPalette[6], cbbPalette[10])) +
-  scale_y_continuous(labels = scales::percent, name = "Holdout accuracy") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 2), name = "Holdout accuracy") +
   expand_limits(x = -0.85) +
   labs(x = NULL) +
   scale_x_discrete(labels = parse(text = levels(accu.subset$subname))) +
