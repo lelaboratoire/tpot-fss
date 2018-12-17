@@ -25,7 +25,7 @@ n_pop = 100
 dat_name = 'simulatedGenex'
 tpot_data = pd.read_csv('simulatedGenex.csv')
 Xdata = tpot_data.loc[:, tpot_data.columns != 'class']
-Xdata = Xdata.drop(Xdata.columns[0], axis=1)
+Xdata = Xdata.drop(Xdata.columns[0], axis=1) # simvar1 is in feature list subset S5; it's okay to drop
 Ydata = tpot_data['class']
 
 subset_df = pd.read_csv('subsets.csv')
