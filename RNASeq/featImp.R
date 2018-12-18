@@ -12,7 +12,7 @@ p <- feat.imp[1:20,] %>%
   geom_point(color = "grey40", stroke = 0) + theme_bw() +
   facet_grid(. ~ mod) +
   labs(y = NULL, x = NULL) + 
-  scale_x_continuous(limits = c(0.007, 0.04)) + 
+  scale_x_continuous(limits = c(0.0075, 0.05)) + 
   theme(strip.background = element_rect(fill="#fcfce6"))
 
 p# ggsave(p, filename = "importanceFeatures5.svg", height = 4, width = 7)
@@ -27,10 +27,11 @@ q <- feat.imp[1:20,] %>%
   ggplot(aes(x=score, y=fct_reorder(feat, score, fun=identity))) + 
   facet_grid(. ~ mod) +
   geom_point(color = "grey40", stroke = 0) + theme_bw() +
-  scale_x_continuous(limits = c(0.007, 0.04)) +
+  scale_x_continuous(limits = c(0.02, 0.05)) +
   labs(x = NULL, y = NULL) +
   theme(strip.background = element_rect(fill="#fcfce6"))
 # ggsave(q, filename = "importanceFeatures12.svg", height = 4, width = 7)
 q
-pq <- plot_grid(p, q, labels="AUTO")
+pq <- plot_grid(p, q, labels="auto")
+pq
 ggsave(pq, filename = "importanceFeatures.svg", height = 4, width = 7)
