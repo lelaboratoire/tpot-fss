@@ -7,6 +7,9 @@ best.rna <- read_csv('RNASeq/bestAccuracies.csv') %>%
   reshape2::melt(id = 0) %>%
   mutate(dat = 'Real-world data')
 
+best.sim%>%filter(variable == 'XGBoost') %>% summary(avg = mean(value))
+best.rna%>%filter(variable == 'TPOT-DS') %>% summary(avg = mean(value))
+
 best.acc <- rbind(best.sim, best.rna)
 best.acc$dat <- factor(best.acc$dat, levels = unique(best.acc$dat))
   
@@ -14,7 +17,7 @@ pq <- best.acc %>%
   ggplot(aes(y = value, x= variable, color = variable)) +
   facet_wrap(~ dat) +
   theme_bw() + geom_boxplot() +
-  theme(strip.background = element_rect(fill="#fcfce6")) +
+  # theme(strip.background = element_rect(fill="#fcfce6")) +
   scale_color_manual(values = cbPalette[c(8,6,3)])+
   guides(color = F) + labs(x = NULL, y = 'Accuracy')
 
