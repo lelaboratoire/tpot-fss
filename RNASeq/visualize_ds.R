@@ -63,7 +63,7 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = subnam
 
 q
 
-ggsave(q, filename = paste0("real_", n.iters, ".svg"), width = 5, height = 4, units = "in")
+# ggsave(q, filename = paste0("real_", n.iters, ".svg"), width = 5, height = 4, units = "in")
 
 accu.sub.melt <- reshape2::melt(
   accu.subset[, c("Training CV Accuracy", "Testing Accuracy", "subname", "dataidx")],
