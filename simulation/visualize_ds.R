@@ -70,7 +70,7 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
   theme_bw() +
   annotate("text", x = 10.2, y = 0.35, size = 2.5, fontface = 'italic',
            label = "* Boxplots are drawn for subsets with more than three data points") +
-  scale_color_manual(values = c("#d55e00", "#009E73")) +
+  scale_color_manual(values = c("#d55e00", "#549735")) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 2), name = "Holdout accuracy") +
   expand_limits(x = -0.85) +
   labs(x = NULL) +
