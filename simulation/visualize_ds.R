@@ -66,7 +66,7 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
   geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  
                outlier.size = NULL,
                aes(x = subname, y = `Testing Accuracy`), color = "grey70") +
-  ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.3, size = 1.3, alpha = 0.8, stroke = 0) +
+  ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.3, size = 1.6, alpha = 0.8, stroke = 0) +
   theme_bw() +
   annotate("text", x = 10.2, y = 0.35, size = 2.5, fontface = 'italic',
            label = "* Boxplots are drawn for subsets with more than three data points") +
@@ -78,5 +78,5 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
   guides(fill = FALSE) + guides(colour=FALSE)
 
 q
-ggsave(q, filename = paste0("sim_", n.iters, ".svg"), width = 5.8, height = 2.8, units = "in")
- 
+# ggsave(q, filename = paste0("sim_", n.iters, ".svg"), width = 5.8, height = 2.8, units = "in")
+ggsave(q, filename = paste0("sim_", n.iters, ".pdf"), width = 5.7, height = 2.7, units = "in") 

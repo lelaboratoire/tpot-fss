@@ -87,9 +87,9 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
                position = position_dodge(width = 0.75)) +
   geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  
                aes(x = subname, y = `Testing Accuracy`), color = "grey70") +
-  ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.6, size = 1.5, alpha = 0.8, stroke = 0) +
+  ggbeeswarm::geom_beeswarm(priority = "random", cex = 1.6, size = 1.8, alpha = 0.8, stroke = 0) +
   theme_bw() + 
-  annotate("text", x = 4.3, y = 0.45, size = 2.7, fontface = 'italic',
+  annotate("text", x = 4.2, y = 0.45, size = 2.7, fontface = 'italic',
            label = "* Boxplots are drawn for subsets with more than three data points") +
   # viridis::scale_color_viridis(discrete = T, option = "E") +
   scale_color_manual(values = c(cbbPalette[6], cbbPalette[10])) +
@@ -97,5 +97,5 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
   labs(x = NULL) +
   guides(fill = FALSE) + guides(colour=FALSE)
 q
-ggsave(q, filename = paste0("real_", n.iters, ".svg"), width = 5, height = 3.5, units = "in")
-    
+# ggsave(q, filename = paste0("real_", n.iters, ".svg"), width = 5, height = 3.5, units = "in")
+ggsave(q, filename = paste0("real_", n.iters, ".pdf"), width = 5, height = 3.5, units = "in")    

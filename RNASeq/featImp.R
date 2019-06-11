@@ -32,6 +32,7 @@ q <- feat.imp[1:20,] %>%
   theme(strip.background = element_rect(fill="#fcfce6"))
 # ggsave(q, filename = "importanceFeatures12.svg", height = 4, width = 7)
 q
-pq <- plot_grid(p, q, labels="auto")
+pq <- plot_grid(p, q, labels=c('(a)', '(b)'))
 pq
 ggsave(pq, filename = "importanceFeatures.svg", height = 4, width = 7)
+ggsave(pq, filename = "importanceFeatures.pdf", height = 4, width = 7)
