@@ -10,7 +10,10 @@ best.rna <- read_csv('RNASeq/bestAccuracies.csv') %>%
 
 best.acc <- rbind(best.sim, best.rna)
 best.acc$dat <- factor(best.acc$dat, levels = unique(best.acc$dat))
-  
+
+levels(best.acc$variable) <- 
+  dplyr::recode(levels(best.acc$variable), "TPOT-DS" = "TPOT-FSS")
+
 pq <- best.acc %>% 
   ggplot(aes(y = value, x= variable, color = variable)) +
   facet_wrap(~ dat) +
@@ -22,19 +25,20 @@ pq <- best.acc %>%
 
 pq
 ggsave(pq, filename = 'compareAcc.svg', height = 3, width = 5)
+ggsave(pq, filename = 'compareAcc.pdf', height = 3, width = 5)
 
 
 simX <- best.sim %>% filter(variable == 'XGBoost') %>% pull(value)
 simT <- best.sim %>% filter(variable == 'TPOT') %>% pull(value)
-simDS <- best.sim %>% filter(variable == 'TPOT-DS') %>% pull(value)
+simDS <- best.sim %>% filter(variable == 'TPOT-FSS') %>% pull(value)
 t.test(x = simX, y = simDS, 'less')
 t.test(x = simT, y = simDS, 'less')
 t.test(x = simT, y = simX, 'less')
 
-# best.rna%>%filter(variable == 'TPOT-DS') %>% summary(avg = mean(value))
+# best.rna%>%filter(variable == 'TPOT-FSS') %>% summary(avg = mean(value))
 rnaX <- best.rna %>% filter(variable == 'XGBoost') %>% pull(value)
 rnaT <- best.rna %>% filter(variable == 'TPOT') %>% pull(value)
-rnaDS <- best.rna %>% filter(variable == 'TPOT-DS') %>% pull(value)
+rnaDS <- best.rna %>% filter(variable == 'TPOT-FSS') %>% pull(value)
 t.test(x = as.matrix(rnaX), y = as.matrix(rnaDS), 'less')
 t.test(x = rnaT, y = rnaDS, 'less')
 t.test(x = rnaX, y = rnaT, 'less')
