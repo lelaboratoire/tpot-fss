@@ -26,7 +26,12 @@ pq <- best.acc %>%
 pq
 ggsave(pq, filename = 'compareAcc.svg', height = 3, width = 5)
 ggsave(pq, filename = 'compareAcc.pdf', height = 3, width = 5)
-
+ggsave(
+  pq +
+    scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+    theme(panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank()), 
+  filename = 'fig2.pdf', height = 2.3, width = 5)
 
 simX <- best.sim %>% filter(variable == 'XGBoost') %>% pull(value)
 simT <- best.sim %>% filter(variable == 'TPOT') %>% pull(value)
