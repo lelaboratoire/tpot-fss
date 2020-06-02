@@ -18,18 +18,18 @@ library(tidyverse)
 n.iters <- 100
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", 
                 "#CC79A7", "#c5679b", "#be548f")
-accu <- read_tsv(paste0("accuracies_ds/100_100_", n.iters - 1, ".tsv"))
+accu <- read_tsv(paste0("RNASeq/accuracies_ds/100_100_", n.iters - 1, ".tsv"))
 colnames(accu)[1] <- "dataidx"
 accu.melt <- reshape2::melt(accu, id = "dataidx")
 
-filenames <- list.files("pipelines_ds", pattern="*.py", full.names=TRUE)
+filenames <- list.files("RNASeq/pipelines_ds", pattern="*.py", full.names=TRUE)
 files.short <- gsub("pipelines_ds/RNASeq_|.py|score_", "", filenames)
 selected.sub <- data.frame(matrix(NA, nrow = length(filenames), ncol = 1), 
                            row.names = files.short)
 colnames(selected.sub) <- "selectedSubsetID"
 
 for (file in filenames){
-  file.short <- gsub("pipelines_ds/RNASeq_|.py|score_", "", file)
+  file.short <- gsub("RNASeq/pipelines_ds/RNASeq_|.py|score_", "", file)
   pipe <- read.delim(file, stringsAsFactors = F)
   pipe.idx <- grep("    DatasetSelector", pipe[,1])
   select.i <- gsub("\\, subset_list=module23.csv)\\,|    DatasetSelector\\(sel_subset=", "", pipe[pipe.idx, 1])
@@ -46,7 +46,7 @@ accu.subset.sum <-
 accu.subset$subname <- as.factor(paste0("DGM-", accu.subset$subidx+1))
 accu.subset$subname <- factor(accu.subset$subname, levels = paste0("DGM-", sort(unique(accu.subset$subidx))+1))
 
-write_csv(accu.subset, "accuracyDF.csv")
+# write_csv(accu.subset, "RNASeq/accuracyDF.csv")
 accu12 <- accu.subset[accu.subset$subidx==12,]
 accu12 <- accu12[order(accu12$`Testing Accuracy`, decreasing = T),]
 
@@ -83,7 +83,7 @@ accu.subset$box <- accu.subset$subname %in% c("DGM-5", "DGM-13")
 accu.subset$col <- accu.subset$subname %in% c("DGM-3", "DGM-5", "DGM-17")
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) + 
   stat_summary(fun.data = function(x) c(y = 0.77, label = length(x)), 
-               geom = "text", fun.y = NULL, 
+               geom = "text", fun = NULL, 
                position = position_dodge(width = 0.75)) +
   geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  
                aes(x = subname, y = `Testing Accuracy`), color = "grey70") +
@@ -98,4 +98,20 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
   guides(fill = FALSE) + guides(colour=FALSE)
 q
 # ggsave(q, filename = paste0("real_", n.iters, ".svg"), width = 5, height = 3.5, units = "in")
-ggsave(q, filename = paste0("real_", n.iters, ".pdf"), width = 5, height = 3.5, units = "in")    
+# ggsave(q, filename = paste0("RNASeq/real_", n.iters, ".pdf"), width = 5, height = 3.5, units = "in")    
+
+library(ggdark)
+q_dark <- q + 
+  dark_theme_gray() + 
+  theme(
+    plot.background = element_rect(fill = "#111111"),
+    panel.background = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.major = element_line(color = "grey30", size = 0.2),
+    panel.grid.minor = element_line(color = "grey30", size = 0.2),
+    legend.background = element_blank(),
+    axis.ticks = element_blank(),
+    legend.key = element_blank(),
+    legend.position = c(0.815, 0.27))
+# ggsave(q_dark, filename = paste0("dark_real_", n.iters, ".svg"), height = 3, width = 5)
+

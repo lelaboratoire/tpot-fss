@@ -18,18 +18,18 @@ library(tidyverse)
 n.iters <- 100
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", 
                 "#CC79A7", "#c5679b", "#be548f")
-accu <- read_tsv(paste0("accuracies_ds/100_100_", n.iters - 1, ".tsv"))
+accu <- read_tsv(paste0("simulation/accuracies_ds/100_100_", n.iters - 1, ".tsv"))
 colnames(accu)[1] <- "dataidx"
 accu.melt <- reshape2::melt(accu, id = "dataidx")
 
-filenames <- list.files("pipelines_ds", pattern="*.py", full.names=TRUE)
-files.short <- gsub("pipelines_ds/|.py|score_", "", filenames)
+filenames <- list.files("simulation/pipelines_ds", pattern="*.py", full.names=TRUE)
+files.short <- gsub("simulation/pipelines_ds/|.py|score_", "", filenames)
 selected.sub <- data.frame(matrix(NA, nrow = length(filenames), ncol = 1), 
                            row.names = files.short)
 colnames(selected.sub) <- "selectedSubsetID"
 
 for (file in filenames){
-  file.short <- gsub("pipelines_ds/|.py|score_", "", file)
+  file.short <- gsub("simulation/pipelines_ds/|.py|score_", "", file)
   pipe <- read.delim(file, stringsAsFactors = F)
   pipe.idx <- grep("    DatasetSelector", pipe[,1])
   select.i <- gsub("\\, subset_list=subsets.csv)\\,|    DatasetSelector\\(sel_subset=", "", pipe[pipe.idx, 1])
@@ -49,7 +49,7 @@ accu.subset.sum <-
   summarise(avg.test = mean(`Testing Accuracy`), avg.train.CV = mean(`Training CV Accuracy`))
 
     
-write_csv(accu.subset, "accuracyDF.csv")
+# write_csv(accu.subset, "simulation/accuracyDF.csv")
 accu.subset$subname <- factor(accu.subset$subname, levels = paste0("S[", sort(unique(accu.subset$subidx))+1, "]"))
 
 accu.sub.melt <- reshape2::melt(
@@ -61,7 +61,7 @@ accu.subset$box <- accu.subset$subname %in% c("S[1]", "S[5]", "S[15]")
 accu.subset$col <- accu.subset$subname %in% c("S[1]", "S[3]", "S[5]", "S[8]", "S[12]", "S[16]", "S[18]")
 q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) +
   stat_summary(fun.data = function(x) c(y = 0.9, label = length(x)),
-               geom = "text", fun.y = NULL,
+               geom = "text", fun = NULL,
                position = position_dodge(width = 0.75)) +
   geom_boxplot(data = accu.subset[accu.subset$box == TRUE, ],  
                outlier.size = NULL,
@@ -79,4 +79,18 @@ q <- ggplot(accu.subset, aes(x = subname, y = `Testing Accuracy`, color = col)) 
 
 q
 # ggsave(q, filename = paste0("sim_", n.iters, ".svg"), width = 5.8, height = 2.8, units = "in")
-ggsave(q, filename = paste0("sim_", n.iters, ".pdf"), width = 5.7, height = 2.7, units = "in") 
+# ggsave(q, filename = paste0("simulation/sim_", n.iters, ".pdf"), width = 5.7, height = 2.7, units = "in") 
+library(ggdark)
+(q +
+  dark_theme_gray() + 
+  theme(
+    plot.background = element_rect(fill = "#111111"),
+    panel.background = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.major = element_line(color = "grey30", size = 0.2),
+    panel.grid.minor = element_line(color = "grey30", size = 0.2),
+    legend.background = element_blank(),
+    axis.ticks = element_blank(),
+    legend.key = element_blank(),
+    legend.position = c(0.815, 0.27)) ) %>% 
+ggsave(filename = paste0("dark_sim_", n.iters, ".svg"), width = 5.7, height = 2.7, units = "in")
